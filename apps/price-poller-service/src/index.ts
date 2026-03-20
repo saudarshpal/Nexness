@@ -10,7 +10,6 @@ redis.on('connect', () => {
   console.log('✅ Redis connection established');
 });
 
-// An error occurred
 redis.on('error', (err) => {
   console.error('❌ Redis Error:', err);
 });
@@ -30,14 +29,13 @@ ws.on("open", ()=>{
 
 ws.on("message", async(message) => {
     try{
-        console.log("Message",message.toString())
         const data = JSON.parse(message.toString());
-        await redis.xadd(
-            "engine-service-stream",
-            "*",
-            "data",
-            JSON.stringify({ kind : "price-latest", payload : data })
-        );
+        if(!data) return 
+        const envelope = JSON.stringify({ kind : "price-latest", payload : data })
+        await Promise.all([
+            redis.xadd( "engine-stream", "*", "data", envelope ), 
+            redis.publish("prices",envelope)
+        ])
     }catch(err){
         console.log(err);
     }
