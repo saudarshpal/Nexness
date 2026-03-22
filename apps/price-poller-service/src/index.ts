@@ -30,11 +30,12 @@ ws.on("open", ()=>{
 ws.on("message", async(message) => {
     try{
         const data = JSON.parse(message.toString());
-        if(!data) return 
+        if(!data.s) return 
         const envelope = JSON.stringify({ kind : "price-latest", payload : data })
         await Promise.all([
             redis.xadd( "engine-stream", "*", "data", envelope ), 
-            redis.publish("prices",envelope)
+            redis.publish("prices",envelope),
+            redis.set(`price:${data.s.toLowerCase()}`,data.a)
         ])
     }catch(err){
         console.log(err);
