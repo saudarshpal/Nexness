@@ -17,10 +17,10 @@ export const startConsumer = async()=>{
 
             for( const[stream,messages] of results){         
                 for( const [id, fields] of messages){  
-                    const data = JSON.parse(fields[1]) 
-                    const {payload} = data;
+                    const tick = JSON.parse(fields[1]) 
+                    const { data } = tick;
 
-                    await processTick(payload.s.toLowerCase(),Number(payload.a));
+                    await processTick(data.s.toLowerCase(),Number(data.a));
 
                     await redis.xack('engine-stream','engine-group',id);
                 }

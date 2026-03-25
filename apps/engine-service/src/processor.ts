@@ -71,12 +71,11 @@ export const processTick = async(symbol : string,currentPrice: number) => {
             removeFromcache(symbol, positionId);
         }
         else{
-            const update = JSON.stringify({ 
+            const envelope = JSON.stringify({ 
                 kind : "position-latest",
-                userId, positionId,
-                unrealizedPnL
+                data : {userId, positionId, unrealizedPnL}
             })
-            await redis.publish("position-update",update)
+            await redis.publish("position-update", envelope);
         }
     }
 }

@@ -31,7 +31,7 @@ ws.on("message", async(message) => {
     try{
         const data = JSON.parse(message.toString());
         if(!data.s) return 
-        const envelope = JSON.stringify({ kind : "price-latest", payload : data })
+        const envelope = JSON.stringify({ kind : "price-latest", data : data })
         await Promise.all([
             redis.xadd( "engine-stream", "*", "data", envelope ), 
             redis.publish("prices",envelope),
