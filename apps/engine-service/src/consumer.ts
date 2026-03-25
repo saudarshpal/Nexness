@@ -40,7 +40,7 @@ const drainPending = async() => {
             const results :any = await redis.xreadgroup(
                 'GROUP','engine-group','engine-worker-1',
                 'COUNT','10',
-                'BLOCK','0',
+                'BLOCK','100',
                 'STREAMS','engine-stream','0'
             )   
             if(!results) break;
