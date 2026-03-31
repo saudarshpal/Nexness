@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+:root {
+    --font-ibm-plex-serif: 'IBM Plex Serif', sans-serif;
+    --font-instrument-serif: 'Instrument Serif', serif;
+    --font-ibm-plex-mono: 'IBM Plex Mono', monospace;
+}
+
+body {
+    font-family: var(--font-ibm-plex-serif);
+}
+
+
+.font-plex-sherif {
+    font-family: var(--font-ibm-plex-serif);
+}
+
+.font-instrument-serif {
+    font-family: var(--font-instrument-serif);
+}
+
+.font-plex-mono {
+    font-family: var(--font-ibm-plex-mono);
+}
