@@ -15,9 +15,9 @@ const Header = () => {
                  Marketplace 
             </div>
         </div>
-        <div className='flex  font-semibold items-center text-white bg-black hover:bg-black/90 cursor-pointer px-8 py-2 rounded-full'>
+        <Link  href={`/signin`} className='font-semibold text-center text-white bg-black hover:bg-black/90 cursor-pointer px-8 py-2 rounded-full'>
             Login
-        </div>
+        </Link>
     </div>
   )
 }
