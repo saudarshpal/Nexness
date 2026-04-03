@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 
 
 const app = express();
+const PORT = process.env.PORT || 3001
 
 app.use(cors())
 app.use(express.json());
@@ -20,7 +21,6 @@ app.get('/api/health',(req: Request ,res : Response)=>{
 app.use('/api',primaryRouter);
 app.use(errorHandler);
 
-
-app.listen(3000,()=>{
+app.listen(PORT,()=>{
     console.log("✅ api-service Up and Running")
 })
