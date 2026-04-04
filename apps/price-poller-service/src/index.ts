@@ -20,13 +20,15 @@ const startPricePoller = () => {
 
     ws.on("message", async(message) => {
         try{
-            const data = JSON.parse(message.toString());
+            const data = JSON.parse(message.toString());  // message arrives as buffer 
             if(!data.s) return 
             const envelope = JSON.stringify({ kind : "price-latest", data : data })
             await Promise.all([
-                redis.xadd( "engine-stream", "*", "data", envelope ), 
                 redis.publish("prices",envelope),
-                redis.set(`price:${data.s.toLowerCase()}`,data.a)
+                redis.set(`price:${data.s.toLowerCase()}`,JSON.stringify({
+                    price : data.a,
+                    timestamp : Date.now()
+                }))
             ])
         }catch(err){
             console.log(err);
