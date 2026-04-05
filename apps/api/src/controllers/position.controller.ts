@@ -11,6 +11,7 @@ import { symbol } from 'zod';
 
 
 export const openPosition = catchAsync(async(req : Request, res : Response , next : NextFunction)=>{
+    const action = "open";
     const userId = req.user.userId;
     const result = openPositionSchema.safeParse(req.body);
     if(!result.success) throw new AppError(ResponseStatus.BAD_REQUEST,"Validation Error");
@@ -18,8 +19,8 @@ export const openPosition = catchAsync(async(req : Request, res : Response , nex
     const user = await prisma.user.findUnique({where : { id : userId}})
     if(!user) throw new AppError(ResponseStatus.NOT_FOUND,"User Not Found");
 
-    const { symbol, type, leverage, quantity, takeProfit, stopLoss } = result.data;
-    let currentPrice = await getCurrentPrice(symbol);
+    const { symbol, type , leverage, quantity, takeProfit, stopLoss } = result.data;
+    let currentPrice = await getCurrentPrice(symbol,type,action);
 
     const margin = (quantity*currentPrice)/leverage;
     if( user.walletBalance.lessThan(margin.toString()) ) throw new AppError(ResponseStatus.UNPROCESSABLE,"Insufficient Balance");
@@ -51,6 +52,7 @@ export const openPosition = catchAsync(async(req : Request, res : Response , nex
 
 
 export const closePosition = catchAsync(async(req: Request, res : Response , next : NextFunction)=>{
+    const action = "close";
     const userId = req.user.userId;
     const user = await prisma.user.findUnique({where : {id : userId}});
     if(!user) throw new AppError(ResponseStatus.NOT_FOUND,"User Not Found");
@@ -70,7 +72,10 @@ export const closePosition = catchAsync(async(req: Request, res : Response , nex
 
     const margin = (openingPrice * quantity)/leverage; 
 
-    const currentPrice = await getCurrentPrice(position.symbol);
+    const currentPrice = await getCurrentPrice(position.symbol,
+        position.type === "LONG" ? "SHORT" : "LONG",
+        action
+    );
     const realizedPnL = position.type === "LONG"
         ? (currentPrice - openingPrice) * quantity
         : (openingPrice - currentPrice) * quantity
