@@ -25,19 +25,29 @@ const removeFromcache = (symbol:string, positionId : string) =>{
     openPosition.set(symbol,cached.filter(p=> p.id !== positionId)) ; 
 }
 
-export const processTick = async(symbol : string,currentPrice: number) => {
+export const processTick = async(
+    symbol : string , 
+    currentPrice: { ask : number , bid : number } 
+    ) => {
+
     console.log("processTick called:",symbol,currentPrice);
+
     const positions = openPosition.get(symbol) || []
     console.log("total open positions:",positions.length);
+
     for ( const position of positions){
         const quantity = Number(position.quantity);
         const openingPrice = Number(position.openingPrice);
         const leverage = position.leverage;
+        const type = position.type;
+
+        const closingPrice = position.type === "LONG" ? currentPrice.bid : currentPrice.ask;
+
 
         const margin = (openingPrice * quantity)/leverage;
-        const unrealizedPnL = position.type === "LONG"
-                ? (currentPrice - openingPrice) * quantity
-                : (openingPrice - currentPrice) * quantity
+        const unrealizedPnL = type === "LONG"
+                ? (currentPrice.bid - openingPrice) * quantity
+                : (openingPrice - currentPrice.ask) * quantity
 
         const currentBalance = Number(position.user.walletBalance);
 
@@ -47,12 +57,13 @@ export const processTick = async(symbol : string,currentPrice: number) => {
         const takeProfit = position.takeProfit ? Number(position.takeProfit) : null;
         const stopLoss =  position.stopLoss ? Number(position.stopLoss) : null
 
-        const LimitClose = checkLimits(currentPrice,takeProfit,stopLoss);
+        
+        const LimitClose = checkLimits(closingPrice,takeProfit,stopLoss,type);
 
         const userId = position.user.id;
         const positionId = position.id;
         const positionCloseUpdate = {
-            closingPrice : currentPrice,
+            closingPrice,
             unrealizedPnL,
             margin,
             currentBalance
@@ -82,9 +93,19 @@ export const processTick = async(symbol : string,currentPrice: number) => {
 
 setInterval(refreshPositions,5000);
 
-const checkLimits = (currentPrice:number, takeProfit:number | null, stopLoss:number | null) : string =>{
-    if (takeProfit &&  currentPrice >= takeProfit ) return CloseType.TAKE_PROFIT;
-    else if(stopLoss && currentPrice <= stopLoss) return CloseType.STOP_LOSS;
+const checkLimits = (
+    closingPrice: number , 
+    takeProfit: number | null ,
+    stopLoss: number | null ,
+    type : "LONG" | "SHORT"
+    ) : string =>{
+        if (type === "LONG"){
+            if (takeProfit &&  closingPrice >= takeProfit ) return CloseType.TAKE_PROFIT;
+            else if(stopLoss && closingPrice <= stopLoss) return CloseType.STOP_LOSS;  
+        }else{
+            if (takeProfit &&  closingPrice >= takeProfit ) return CloseType.TAKE_PROFIT;
+            else if(stopLoss && closingPrice <= stopLoss) return CloseType.STOP_LOSS;
+        }
     return "";
 }
 
