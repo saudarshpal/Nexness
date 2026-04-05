@@ -5,6 +5,10 @@ const url = "wss://stream.binance.com:9443/ws";
 
 let ws : WebSocket ;
 
+const SPREAD_CONFIG = {
+    btcusdt : 3
+}
+
 const startPricePoller = () => {
     ws = new WebSocket(url);
 
@@ -22,11 +26,29 @@ const startPricePoller = () => {
         try{
             const data = JSON.parse(message.toString());  // message arrives as buffer 
             if(!data.s) return 
-            const envelope = JSON.stringify({ kind : "price-latest", data : data })
+
+            const symbol = data.s.toLowerCase() as keyof typeof SPREAD_CONFIG
+            const spread = SPREAD_CONFIG[symbol] 
+            const halfSpread = spread/2
+            
+            const rawAsk = parseFloat(data.a)
+            const rawBid = parseFloat(data.b)
+
+            const markedAsk = (rawAsk + halfSpread).toFixed(2)
+            const markedBid = (rawBid - halfSpread).toFixed(2)
+
+            
+            const envelope = JSON.stringify({ kind : "price-latest", data : {
+                ...data,
+                a : markedAsk,
+                b : markedBid
+            } })
+
             await Promise.all([
                 redis.publish("prices",envelope),
-                redis.set(`price:${data.s.toLowerCase()}`,JSON.stringify({
-                    price : data.a,
+                redis.set(`price:${symbol}`,JSON.stringify({
+                    ask : markedAsk,
+                    bid : markedBid,
                     timestamp : Date.now()
                 }))
             ])
