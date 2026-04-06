@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Serif, Instrument_Serif , IBM_Plex_Mono} from 'next/font/google'
 import "./globals.css";
+import { Providers } from "./providers";
 
 const ibmPlexSerif = IBM_Plex_Serif({
   variable : "--font-ibm-plex-serif",
@@ -36,7 +37,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${ibmPlexSerif.variable} ${instrumentSerif.variable} ${ibmPlexMono.variable}`}>
       <body>
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
