@@ -1,44 +1,90 @@
-import { useEffect, useRef } from "react"
-import { useMarketStore } from "../store/market.store"
+import { timeStamp } from "console";
+import { useEffect, useRef, useState } from "react"
+
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:9090" ;
 
+interface PriceData{
+    ask : number 
+    bid : number
+    timestamp : number
+}
+
+interface pnlUpdate{
+    unrealizedPnL : number
+    timestamp : number
+}
+
 export const useWebsocket = ()=>{
-    const ws = useRef<WebSocket | null>(null);
-    const { setPrice, setPositionUpdates} = useMarketStore();
+    const [priceUpdate, setPriceUpdate] = useState<Record<string,PriceData>>({})
+    const [positionUpdate, setPositionUpdate] = useState<Record<string,pnlUpdate>>({}); 
+    const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(()=>{
-        
-        ws.current = new WebSocket(WS_URL);
+        const connect = () =>{
+            try{
+                const ws = new WebSocket(WS_URL);
+                wsRef.current = ws
 
-        ws.current.onopen = ()=>{
-            console.log("✅Websocket Connected");
-        }
+                ws.onopen = ()=>{
+                    console.log("✅Websocket Connected");
+                }
 
-        ws.current.onmessage = (message) =>{
-            const parsedMessage = JSON.parse(message.toString());
+                ws.onmessage = (message) =>{
+                    try{
+                        const parsedMessage = JSON.parse(message.data);
 
-            if ( parsedMessage.kind === "price-latest"){
-                const { symbol, ask, bid } = parsedMessage.data;
-                setPrice(symbol,{ask,bid});
+                        if ( parsedMessage.kind === "price-latest"){
+                            const data = parsedMessage.data;
+                            setPriceUpdate((prev) => ({
+                                ...prev ,
+                                [data.symbol] : {
+                                    ask : data.ask,
+                                    bid : data.bid,
+                                    timestamp : Date.now()
+                                }
+                            }))    
+                        }
+                        if( parsedMessage.kind === "position-latest"){
+                            const data = parsedMessage.data;
+                            setPositionUpdate((prev)=> ({
+                                ...prev,
+                                [data.positionId] : {
+                                    unrealizedPnL : data.unrealizedPnL,
+                                    timeStamp : Date.now()
+                                }
+                            }))
+                        }
+                        else if (parsedMessage.type === "auth") {
+                                console.log("Server Auth Status:", parsedMessage.status);
+                        }
+                    }catch(error){
+                        console.log("Failed to parse websocket message",error);
+                    }
+                }
+
+                ws.onclose = () =>{
+                    console.log("Websocket disconnected, Reconnecting...");
+                    setTimeout(connect,3000);
+                }
+
+                ws.onerror = (error) =>{
+                    console.log("❌Websocket Error:",error);
+                }
+
+            }catch(error){
+                console.log("❌Error connecting to Websokcet");
+                setTimeout(connect,3000);
             }
-            if( parsedMessage.kind === "position-latest"){
-                const { positionId, unrealizedPnL } = parsedMessage.data;
-                setPositionUpdates(positionId, unrealizedPnL);
+        };
+        connect();
+
+        return ()=>{
+            if(wsRef.current){
+                wsRef.current.close();
             }
-
-        }
-
-        ws.current.onerror = (err) =>{
-            console.log("Websocket Error: ",err);
-        }
-
-        ws.current.close = () =>{
-            console.log("Websocket Disconnected");
-        }
-
-        return () =>{
-            ws.current?.close()
         }
     },[])
+
+    return {priceUpdate,positionUpdate}
 }
