@@ -18,6 +18,7 @@ interface pnlUpdate{
 export const useWebsocket = ()=>{
     const [priceUpdate, setPriceUpdate] = useState<Record<string,PriceData>>({})
     const [positionUpdate, setPositionUpdate] = useState<Record<string,pnlUpdate>>({}); 
+    const [ connected, setConnected ] = useState(false); 
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(()=>{
@@ -28,6 +29,7 @@ export const useWebsocket = ()=>{
 
                 ws.onopen = ()=>{
                     console.log("✅Websocket Connected");
+                    setConnected(true);
                 }
 
                 ws.onmessage = (message) =>{
@@ -65,6 +67,7 @@ export const useWebsocket = ()=>{
 
                 ws.onclose = () =>{
                     console.log("Websocket disconnected, Reconnecting...");
+                    setConnected(false);
                     setTimeout(connect,3000);
                 }
 
@@ -86,5 +89,5 @@ export const useWebsocket = ()=>{
         }
     },[])
 
-    return {priceUpdate,positionUpdate}
+    return { priceUpdate, positionUpdate, connected}
 }
