@@ -44,9 +44,7 @@ export const openPosition = catchAsync(async(req : Request, res : Response , nex
         })
     ])
    
-    return res.status(ResponseStatus.CREATED).json({msg:"Opened Positon",position:{
-        postionId : position.id
-    }})
+    return res.status(ResponseStatus.CREATED).json({msg:"Opened Positon", positionId: position.id})
 });
 
 
@@ -107,4 +105,35 @@ export const closePosition = catchAsync(async(req: Request, res : Response , nex
         })
     ])
     res.status(ResponseStatus.OK).json({msg: "Position Closed Successfully",positionId : closedPosition.id})
+})
+
+export const getOpenPositions = catchAsync( async( req : Request, res : Response) => {
+    const userId = req.user.userId;
+    const positions = await prisma.position.findMany({
+        where : {
+            userId,
+            status : "OPEN"
+        },
+        orderBy : {
+            createdAt : 'desc'
+        }
+    });
+    return res.status(200).json({ openPositions : positions });
+})
+
+export const getClosedPositions = catchAsync( async( req : Request, res : Response) => {
+    const userId = req.user.userId;
+    const positions = await prisma.position.findMany({
+        where : {
+            userId,
+            status : "CLOSED"
+        },
+        include : {
+            trade : true
+        },  
+        orderBy : {
+            closedAt : 'desc'
+        }
+    });
+    return res.status(200).json({ closedPositions : positions });
 })
