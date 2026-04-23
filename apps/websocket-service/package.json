@@ -4,18 +4,20 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev" : "bun --watch src/index.ts",
-    "start" : "bun src/index.ts"
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts"
   },
   "devDependencies": {
+    "@repo/redis": "workspace:*",
     "@types/bun": "latest",
-    "@types/ws": "^8.18.1",
-    "@repo/redis" : "workspace:*"
+    "@types/cookie": "^1.0.0",
+    "@types/ws": "^8.18.1"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
+    "cookie": "^1.1.1",
     "jsonwebtoken": "^9.0.3",
     "ws": "^8.20.0"
   }

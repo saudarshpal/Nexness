@@ -1,13 +1,15 @@
 import { WebSocketServer, WebSocket } from "ws";
 import jwt from 'jsonwebtoken';
 import { redis } from '@repo/redis';
+import { parse } from "cookie";
 
-
-interface JwtPayload{
-    userId : string
+interface JwtPayload {
+    userId : string,
+    email : string
 }
 
-const clients = new Map<string,WebSocket>();
+const userSockets = new Map<string,WebSocket>();
+const allsockets = new Set<WebSocket>();
 
 const ws = new WebSocketServer({port : 9090})
 
@@ -28,11 +30,14 @@ redisSub.on("message",(channel,message)=>{
             bid : parseFloat(b).toFixed(2)
         }
 
-        for( const [userId, socket] of clients){
-            if( socket.readyState === WebSocket.OPEN){
-                socket.send(JSON.stringify({kind:"price-latest",data : price}))
-            }
-        }
+        allsockets.forEach(socket => {
+          if (socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({ 
+                kind: "price-latest", 
+                data: price 
+            }));
+          }
+        });
     }
 
     if (channel === "position-update"){
@@ -42,42 +47,52 @@ redisSub.on("message",(channel,message)=>{
         const {userId,positionId,unrealizedPnL} = envelope.data;
         const roundedPnL = parseFloat(unrealizedPnL).toFixed(2)
 
-        const socket = clients.get(userId);
-        if ( socket && socket.readyState === WebSocket.OPEN){
-            socket.send(JSON.stringify({kind : "position-latest", data : {positionId,unrealizedPnL : roundedPnL}}));
-        } 
+        const userSocket  = userSockets.get(userId);
 
+        if (userSocket && userSocket.readyState === WebSocket.OPEN) {
+            userSocket.send(JSON.stringify({ 
+                kind: "position-latest", 
+                data: {positionId,unrealizedPnL : roundedPnL}
+            }));
+        }
+       }
+    })
+
+ws.on('connection',(socket,req)=>{
+    console.log('✅ Client connected ')
+    allsockets.add(socket);
+
+    const cookies = parse(req.headers.cookie || '');
+    const token = cookies.token 
+
+    if(token){
+        try{
+            const decoded = jwt.verify(token,"jwtsecret") as JwtPayload
+            userSockets.set(decoded.userId,socket);
+            console.log(`User ${decoded.email} authenticated via cookie`);
+        }catch(e){
+            console.log(`❌ Invalid token in cookie`)
+        }
     }
-})
 
-ws.on('connection',(socket)=>{
+    
     socket.on('error',(error)=>{
         console.log(`WebSocket Error : ${error}`);
     });
 
-    socket.on('message',async(message)=>{
-        try{
-            const parsedMessage = JSON.parse(message as unknown as string);
-
-            if (parsedMessage.type === "auth") {
-                const token = parsedMessage.token;
-                const decoded = jwt.verify(token,"jwtsecret") as JwtPayload; 
-                clients.set(decoded.userId,socket);
-                socket.send(JSON.stringify({type: "auth", status : "success"}));
-                }
-        }catch(err){
-            socket.send(JSON.stringify({type : "auth",status : "invalid token"}))
-        }   
-    });
 
     socket.on('close',()=>{
-        for(const [userId, s] of clients){
-            if (s === socket) {
-                clients.delete(userId);
+        allsockets.delete(socket);
+
+        for(const [userId,s] of userSockets) {
+            if (s === socket){
+                userSockets.delete(userId);
+                console.log('👤 User Disconnected');
                 break;
             }
         }
     })
+
     
 })
 
