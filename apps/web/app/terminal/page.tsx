@@ -1,7 +1,7 @@
 "use client"
 import { Group, Panel, Separator  } from "react-resizable-panels";
 import LiveTicker from "../components/LiveTicker";
-import PositionCard from "../components/OrderCard";
+import OrderCard from "../components/OrderCard";
 import BottomBar from "../components/BottomBar";
 import Chart from "../components/Chart";
 import { useAuth } from "../hooks/useAuth";
@@ -13,7 +13,7 @@ import Deposit from "../components/Deposit";
 
 
 const Terminal = () => {
-    const { data, depositBalance } = useBalance();
+    const { data } = useBalance();
     const [isDepositOpen, setIsDepositOpen] = useState(false);
     const router = useRouter();
     
@@ -32,7 +32,7 @@ const Terminal = () => {
                 <span className="font-semibold text-2xl">
                     Nexness Terminal
                 </span>
-                <div className="flex justify-center text-center pl-35">
+                <div className="flex justify-center text-center pl-20">
                     <span onClick={()=> router.push('/')} className="hover:text-gray-700 cursor-pointer">
                         Home
                     </span>
@@ -53,13 +53,13 @@ const Terminal = () => {
                 />
             </div>
             <Group orientation="horizontal">
-                <Panel defaultSize="30%">
+                <Panel defaultSize="25%">
                     <LiveTicker></LiveTicker>
                 </Panel>
                 <Separator className="outline-none">
                     <div className="w-[3px] h-full bg-gray-200 " />
                 </Separator>
-                <Panel defaultSize={`70%`} minSize={`70%`}>
+                <Panel defaultSize={`75%`} minSize={`75%`}>
                     <Group orientation="vertical">
                         <Panel>
                             <Chart></Chart>
@@ -67,7 +67,7 @@ const Terminal = () => {
                         <Separator className="outline-none">
                             <div className="block h-[3px] bg-gray-200 " />
                         </Separator>
-                        <Panel defaultSize="30%" minSize="11%" maxSize="100%">
+                        <Panel defaultSize="35%" minSize="12%" maxSize="100%">
                             <BottomBar></BottomBar>
                         </Panel>
                     </Group>
@@ -76,7 +76,7 @@ const Terminal = () => {
                     <div className="w-[3px] h-full bg-gray-200 " />
                 </Separator>
                 <div>
-                    <PositionCard ></PositionCard>
+                    <OrderCard ></OrderCard>
                 </div>
                 
             </Group>

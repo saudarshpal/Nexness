@@ -56,7 +56,7 @@ export default function BottomBar() {
 
   return (
     <div className="w-full">
-      <div className="flex gap-6 px-6 pt-2 border-b border-gray-100">
+      <div className="overflow-y-auto [&::-webkit-scrollbar]:hidden flex gap-6 px-6 pt-2 border-b border-gray-100 ">
         {tabs.map((tab) => (
           <button
             key={tab}
