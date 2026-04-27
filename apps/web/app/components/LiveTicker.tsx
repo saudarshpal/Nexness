@@ -11,22 +11,17 @@ const LiveTicker = () => {
                 <span className='font-semibold'>Market Data</span>
                 <div className='text-xs bg-green-200 text-green-900 rounded-full px-3 py-1'>LIVE </div> 
             </div>
-            <div className='flex justify-between text-sm border-b border-gray-400 pb-3'>
+            <div className='grid grid-cols-3 justify-between text-sm border-b border-gray-400 pb-3'>
                 <span >Symbol</span>
-                <div className='flex justify-between gap-15'>
-                    <span >Bid</span>
-                    <span >Ask</span>
-                </div>
-
+                <span className='text-center'>Bid</span>
+                <span className='text-center'>Ask</span>
             </div>
             <div className='flex-col text-sm  '>
                 {Object.entries(priceUpdate).map(([symbol, priceData]) => (
-                    <div key={symbol} className='flex justify-between mb-4'>
+                    <div key={symbol} className='grid grid-cols-3 mb-4'>
                         <span>{symbol.toUpperCase()}</span>
-                        <div className='flex justify-between gap-2'>
-                            <span className='text-green-700'>{priceData.bid || "63000"}</span>
-                            <span  className='text-red-600'>{priceData.ask || "65000"}</span>
-                        </div>
+                        <span className='text-green-700 text-center'>{priceData.bid || "---"}</span>
+                        <span  className='text-red-600 text-center'>{priceData.ask || "---"}</span>
                     </div>
                 ))}
                   

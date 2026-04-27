@@ -85,7 +85,6 @@ export default function BottomBar() {
               </tr>
             </thead>
             <tbody>
-              {/* CHANGE: Use enrichedOpenOrders instead of openOrders.openPositions */}
               {enrichedOpenOrders?.map((position: any) => (
                 <tr key={position.id} className="whitespace-nowrap border-b border-gray-50 hover:bg-gray-50">
                   <td className="px-6 py-4 text-center text-sm ">
@@ -97,7 +96,7 @@ export default function BottomBar() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center text-sm">
-                    {Number(position.openingPrice).toFixed(2)} $
+                    $ {Number(position.openingPrice).toFixed(2)} 
                   </td>
                   <td className="px-6 py-4 text-center text-sm">
                     {Number(position.quantity).toFixed(4)}
@@ -105,7 +104,7 @@ export default function BottomBar() {
                   <td className="px-6 py-4 text-center text-sm">
                     {connected ? (
                       <span className={Number(position.unrealizedPnL) >= 0 ? "text-green-700" : "text-red-600"}>
-                        {Number(position.unrealizedPnL).toFixed(2)} $
+                       $ {Number(position.unrealizedPnL).toFixed(2)} 
                       </span>
                     ) : (
                       <span className="text-gray-400 flex items-center justify-center gap-1">
@@ -169,17 +168,17 @@ export default function BottomBar() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center text-sm">
-                    {Number(position.openingPrice).toFixed(2)} $
+                    $ {Number(position.openingPrice).toFixed(2)} 
                   </td>
                   <td className="px-6 py-4 text-center text-sm">
                     {Number(position.quantity).toFixed(4)}
                   </td>
                   <td className="px-6 py-4 text-center text-sm">
-                    {Number(position.closingPrice).toFixed(2)} $
+                    $ {Number(position.closingPrice).toFixed(2)} 
                   </td>
                   <td className="px-6 py-4 text-center text-sm">
                     <span className={Number(position.pnl) >= 0 ? "text-green-700" : "text-red-600"}>
-                      {Number(position.pnl).toFixed(2)} $
+                      $ {Number(position.pnl).toFixed(2)} 
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center text-sm capitalize">

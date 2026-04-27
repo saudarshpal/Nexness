@@ -70,7 +70,7 @@ export default function OrderCard() {
                 {type === "LONG" ? "Ask Price" : "Bid Price"}
             </span>
             <span className={`${ type === "LONG" ?  "text-red-600" : "text-green-700"} text-md font-bold`}
-            > {type === "LONG" ?  priceUpdate[symbol]?.ask || "---" : priceUpdate[symbol]?.bid || "---" } $
+            > $ {type === "LONG" ?  priceUpdate[symbol]?.ask || "---" : priceUpdate[symbol]?.bid || "---" } 
             </span> 
         </div>
 
