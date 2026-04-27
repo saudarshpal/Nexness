@@ -38,7 +38,7 @@ const Terminal = () => {
                     </span>
                 </div>
                 <div className="flex justify-between items-center ">
-                    <span className="w-50"> Balance : $ {data?.balance ?? 0}</span>
+                    <span className="w-50">Balance: $ {`${!isLoading ? data?.balance : "$ ---"}`}</span>
                     <button 
                         onClick={() => setIsDepositOpen(true)}
                         className="bg-black text-white font-semibold rounded-full px-5 py-[6px] "

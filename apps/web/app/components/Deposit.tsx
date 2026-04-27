@@ -11,7 +11,6 @@ interface DepositProps {
 
 export default function Deposit({ isOpen, onClose, currentBalance }: DepositProps) {
   const [amount, setAmount] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const { depositBalance } = useBalance()
 
   if (!isOpen) return null;
@@ -99,10 +98,10 @@ export default function Deposit({ isOpen, onClose, currentBalance }: DepositProp
           </button>
           <button
             onClick={handleDeposit}
-            disabled={!amount || parseFloat(amount) <= 0 || isLoading}
+            disabled={!amount || parseFloat(amount) <= 0 }
             className="flex-1 py-2.5 px-4 bg-black text-white rounded-lg hover:bg-black/90 disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer"
           >
-            {isLoading ? "Processing..." : "Deposit"}
+            Deposit
           </button>
         </div>
       </div>

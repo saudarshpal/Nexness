@@ -1,6 +1,7 @@
 "use client"
-import { useEffect, useRef, useState } from "react"
-import { createChart, CandlestickSeries, UTCTimestamp } from "lightweight-charts"
+import { useEffect, useRef, useState } from "react";
+import { createChart, CandlestickSeries, UTCTimestamp } from "lightweight-charts";
+import { Loader2 } from "lucide-react";
 
 const SYMBOLS = [
   { value: "BTCUSDT", label: "BTC/USDT"},
@@ -18,13 +19,13 @@ const TIMEFRAMES = [
 const Chart = () => {
   const chartRef = useRef<HTMLDivElement>(null);
 
-  const [symbol, setSymbol]       = useState("BTCUSDT")
-  const [interval, setInterval]   = useState("5m")
+  const [symbol, setSymbol]       = useState("BTCUSDT");
+  const [interval, setInterval]   = useState("5m");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!chartRef.current) return
+    if (!chartRef.current) return;
 
-    // ✅ autoSize: true - chart resizes automatically
     const chart = createChart(chartRef.current, {
       autoSize: true,
       layout: {
@@ -45,22 +46,24 @@ const Chart = () => {
       wickDownColor: "#ef4444",
     })
 
-    // Fetch history
     const loadHistory = async () => {
-      const res = await fetch(
+      try{
+        const res = await fetch(
         `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=500`
-      )
-      const data = await res.json()
-      const candles = data.map((k: any) => ({
-        time: (k[0] / 1000) as UTCTimestamp,
-        open: parseFloat(k[1]),
-        high: parseFloat(k[2]),
-        low: parseFloat(k[3]),
-        close: parseFloat(k[4]),
-      }))
-      candleSeries.setData(candles)
+        )
+        const data = await res.json()
+        const candles = data.map((k: any) => ({
+          time: (k[0] / 1000) as UTCTimestamp,
+          open: parseFloat(k[1]),
+          high: parseFloat(k[2]),
+          low: parseFloat(k[3]),
+          close: parseFloat(k[4]),
+        }))
+        candleSeries.setData(candles)
+      }finally{
+        setIsLoading(false)
+      }
     }
-
     loadHistory()
 
     // Live updates
@@ -87,10 +90,9 @@ const Chart = () => {
 
   return (
     <div className="flex flex-col w-full h-full">
-
+      { !isLoading ? (
       <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100 ">
 
-        {/* left — symbol selector */}
         <div className="flex items-center gap-1">
           {SYMBOLS.map((s) => (
             <button
@@ -107,7 +109,6 @@ const Chart = () => {
           ))}
         </div>
 
-        {/* right — timeframe selector */}
         <div className="flex items-center gap-1">
           {TIMEFRAMES.map((tf) => (
             <button
@@ -123,13 +124,14 @@ const Chart = () => {
             </button>
           ))}
         </div>
-
-      </div>
-
-      {/* chart fills remaining height after toolbar */}
-      <div ref={chartRef} className="w-full h-full overflow-y-auto [&::-webkit-scrollbar]:hidden" />
-
-    </div>
+      </div> 
+      ) : ( 
+      <div className="flex items-center justify-center p-30">
+         <Loader2 className="w-7 h-7 animate-spin text-gray-600" />
+      </div>)
+    }
+    <div ref={chartRef} className="w-full h-full overflow-y-auto [&::-webkit-scrollbar]:hidden" />   
+  </div>
   )
 }
 
