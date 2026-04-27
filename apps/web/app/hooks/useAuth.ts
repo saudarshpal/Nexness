@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { User, SignupRequest, SigninRequest} from "../types/auth.type";
 import { authService } from "../services/auth.service";
+import toast from "react-hot-toast";
 
 
 
@@ -19,10 +20,12 @@ export const useAuth = ()=>{
         mutationFn : ({name,email,password} : SignupRequest) => authService.signup(name,email,password),
         onSuccess : (data) => {
             queryClient.setQueryData(['user'],data.user);
+            toast.success("Signup successfull!");
         },
         onError : (error : any)=>{
             const errorMessage = error?.response?.data?.error ;
             console.log(errorMessage);
+            toast.error("Signup failed!");
         }
     })
 
@@ -30,11 +33,13 @@ export const useAuth = ()=>{
         mutationFn : ({email,password} : SigninRequest) => authService.signin(email,password),
         onSuccess : (data) =>{
             queryClient.setQueryData(['user'],data.user);
+            toast.success('Login successfull');
             
         },
         onError : (error : any)=>{
             const errorMessage = error?.response?.data?.error ;
             console.log(errorMessage);
+            toast.error('Login failed');
         }
     })
 
@@ -43,10 +48,13 @@ export const useAuth = ()=>{
         onSuccess : ()=>{
             queryClient.setQueryData(['user'],null);
             queryClient.invalidateQueries({queryKey : ['user']});
+            toast.success('Logout successfull!');
         },
         onError : (error : any)=>{
             const errorMessage = error?.response?.data?.error ;
             console.log(errorMessage);
+            toast.error("Logout failed!");
+
         }
     })
 

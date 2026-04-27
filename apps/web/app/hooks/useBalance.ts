@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { balanceService } from "../services/balance.service"
 import { DepositRequest } from "../types/balance.type";
+import toast from "react-hot-toast";
 
 export const useBalance = () =>{
 
@@ -18,9 +19,13 @@ export const useBalance = () =>{
         onSuccess : (data) => {
             queryClient.invalidateQueries({queryKey :['balance']});
             queryClient.setQueryData(['balance'],data);
+            toast.success("Deposit successfull!");
+            
+            
         },
         onError : (error : any)=>{
             console.log(error);
+            toast.error("Deposit failed!");
         }
     });
 

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 const Signin = () => {
     const router = useRouter()
@@ -13,6 +14,15 @@ const Signin = () => {
 
     const handleSubmit = async(e : React.FormEvent) =>{
         e.preventDefault();
+        if (!email || !password){
+            toast.error("Please enter all fields");
+            return;
+        }
+
+        if( password.length < 6) {
+            toast.error('Password must be at least 6 characters long');
+            return;
+        }
         try {
             await signinMutation.mutateAsync({email,password});
             router.push('/');

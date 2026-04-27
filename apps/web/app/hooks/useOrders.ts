@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authService } from "../services/auth.service";
 import { orderSercive } from "../services/order.service";
+import toast from "react-hot-toast";
 
 type OrderType = "SHORT" | "LONG"
 
@@ -19,10 +20,12 @@ export const useOrders = () => {
         }) =>  orderSercive.createOrder(symbol, type, quantity, leverage, takeProfit, stopLoss),
         onSuccess : () => {
             queryClient.invalidateQueries({ queryKey: ['openOrders'] });
-            console.log("Order created")
+            console.log("Order created");
+            toast.success("Order created!");
         },
         onError : (error : any) =>{
             console.log(error)
+            toast.error("Order create failed!");
         }
     })
 
@@ -32,9 +35,11 @@ export const useOrders = () => {
             queryClient.invalidateQueries({ queryKey: ['openOrders'] });
             queryClient.invalidateQueries({ queryKey: ['closedOrders'] });
             console.log(" Order Closed ");
+            toast.success("Order closed!");
         },
         onError : (error : any) => {
             console.log(error);
+            toast.error('Order close failed!')
         }
     })
 

@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { useWebsocket } from "../hooks/useWebsocket";
 import { useOrders } from "../hooks/useOrders";
+import toast from "react-hot-toast";
 
 type PositionType= "LONG" | "SHORT" 
 
@@ -14,7 +15,8 @@ export default function OrderCard() {
     const [stopLoss, setStopLoss] = useState("");
     const [leverage, setLeverage] = useState(1);
     const { createOrderMutation } = useOrders()
-
+    
+    
     const numericQuantity = parseFloat(quantity) || 0 ;
     const askPrice = priceUpdate[symbol]?.ask ?? 0
     const bidPrice = priceUpdate[symbol]?.bid ?? 0
@@ -28,6 +30,12 @@ export default function OrderCard() {
 
     const handleCreateOrder = async(e : React.FormEvent) => {
         e.preventDefault();
+
+        if(!quantity){
+        toast.error("Enter volume");
+        return; 
+        }
+        
         try{
             const payload = {
                 symbol, 
