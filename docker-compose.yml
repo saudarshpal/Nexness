@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: nexness-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - nexness-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    container_name: redis-nexness
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: nexness-api-service
+    ports:
+      - "3001:3001"
+    env_file: .env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  engine:
+    build:
+      context: .
+      dockerfile: apps/engine-service/Dockerfile
+    container_name: nexness-engine-service
+    env_file: .env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_started
+
+  price-poller:
+    build:
+      context: .
+      dockerfile: apps/price-poller-service/Dockerfile
+    container_name: nexness-price-poller-service
+    env_file: .env.production
+    depends_on:
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_started
+
+  websocket:
+    build:
+      context: .
+      dockerfile: apps/websocket-service/Dockerfile
+    container_name: nexness-websocket-service
+    ports:
+      - "9090:9090"
+    env_file: .env.production
+    depends_on:
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_started
+
+volumes:
+  nexness-db:
