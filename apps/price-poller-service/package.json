@@ -1,5 +1,5 @@
 {
-  "name": "price-poller",
+  "name": "price-poller-service",
   "module": "index.ts",
   "type": "module",
   "private": true,
