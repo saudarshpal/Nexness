@@ -103,8 +103,8 @@ const checkLimits = (
             if (takeProfit &&  closingPrice >= takeProfit ) return CloseType.TAKE_PROFIT;
             else if(stopLoss && closingPrice <= stopLoss) return CloseType.STOP_LOSS;  
         }else{
-            if (takeProfit &&  closingPrice >= takeProfit ) return CloseType.TAKE_PROFIT;
-            else if(stopLoss && closingPrice <= stopLoss) return CloseType.STOP_LOSS;
+            if (takeProfit &&  closingPrice <= takeProfit ) return CloseType.TAKE_PROFIT;
+            else if(stopLoss && closingPrice >= stopLoss) return CloseType.STOP_LOSS;
         }
     return "";
 }
