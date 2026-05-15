@@ -46,7 +46,7 @@ const Signin = () => {
         <div className='relative z-10 '>
             <div className='flex justify-center items-center px-4' >
                 <div className='max-w-md w-full mx-auto '>
-                    <div className='text-center mb-4 mt-12'>
+                    <div className='text-center mb-4 mt-20'>
                         <h1 className='text-3xl font-semibold'> Welcome Back </h1>
                         <p className='italic text-gray-700 text-md mt-3 '> Good to See You Again, Pick Up Where You Left Off </p>
                     </div>
@@ -57,7 +57,7 @@ const Signin = () => {
                             <input
                                 type='text'
                                 onChange={(e)=> setEmail(e.target.value)}
-                                className='w-full px-4 py-2 border-2 border-black rounded-lg outline-none'
+                                className='w-full px-4 py-2 border-2 border-black rounded-full outline-none'
                                 placeholder='Enter your name'
                             />
                         </div>
@@ -67,13 +67,13 @@ const Signin = () => {
                             <input
                                 type='text'
                                 onChange={(e)=> setPassword(e.target.value)}
-                                className='w-full px-4 py-2 border-2 border-black rounded-lg outline-none'
+                                className='w-full px-4 py-2 border-2 border-black rounded-full outline-none'
                                 placeholder='Enter your name'
                             />
                         </div>
 
-                        <button  type='submit' className='w-full bg-black text-white font-semibold rounded-lg px-4 py-3 mt-4'>
-                            Sign In
+                        <button  type='submit' className='w-full bg-black text-white font-semibold rounded-full hover:bg-black/90 cursor-pointer px-4 py-3 mt-4'>
+                            Sign In 
                         </button>
 
                     </form>

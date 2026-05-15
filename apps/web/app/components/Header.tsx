@@ -27,14 +27,14 @@ const Header = () => {
               logoutMutation.mutate()
               router.push('/')
             }} 
-            className='font-semibold text-center text-white bg-black hover:bg-black/90 cursor-pointer px-8 py-2 rounded-full'
+            className='font-semibold text-center text-white bg-black border-2 border-gray-300 hover:bg-black/90 cursor-pointer px-8 py-2 rounded-full'
             >
               Logout
           </button>
         ) : (
           <Link  
             href={'/signin'} 
-            className='font-semibold text-center text-white bg-black hover:bg-black/90 cursor-pointer px-8 py-2 rounded-full'
+            className='font-semibold text-center text-white bg-black border-2 border-gray-300 hover:bg-black/90 cursor-pointer px-8 py-2 rounded-full'
             >
               Login
           </Link>

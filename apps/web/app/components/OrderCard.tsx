@@ -3,6 +3,8 @@ import { useState } from "react"
 import { useWebsocket } from "../hooks/useWebsocket";
 import { useOrders } from "../hooks/useOrders";
 import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
+import { useBalance } from "../hooks/useBalance";
 
 type PositionType= "LONG" | "SHORT" 
 
@@ -14,7 +16,8 @@ const SYMBOL_LABELS : Record<string, string>  = {
 
 
 const OrderCard = ({ symbol } : { symbol: string}) => {
-    const { priceUpdate } = useWebsocket()
+    const { walletBalance } = useBalance();
+    const { priceUpdate } = useWebsocket();
     const [ type , setType] = useState<PositionType>("LONG");
     const [quantity, SetQuantity] = useState("");
     const [takeProfit, setTakeProfit] = useState("");
@@ -36,12 +39,10 @@ const OrderCard = ({ symbol } : { symbol: string}) => {
 
     const handleCreateOrder = async(e : React.FormEvent) => {
         e.preventDefault();
-
-        if(!quantity){
-        toast.error("Enter volume");
-        return; 
+        if( requiredMargin > (walletBalance?.balance || 0 )) {
+            toast.error("Insufficient balance");
+            return;
         }
-        
         try{
             const payload = {
                 symbol : symbol.toLowerCase(), 
@@ -81,7 +82,7 @@ const OrderCard = ({ symbol } : { symbol: string}) => {
         </div>
 
         <div className="flex flex-col gap-1.5">
-            <label className="text-sm">Volume</label>
+            <label className="text-sm">Quantity</label>
             <div className="flex items-center justify-between border border-black rounded-xl px-3 py-2">
                 <input
                     value={quantity}
@@ -136,7 +137,7 @@ const OrderCard = ({ symbol } : { symbol: string}) => {
             />
         </div>
 
-        <button onClick={handleCreateOrder} className={`w-full  font-semibold text-sm text-white rounded-xl bg-black px-3 py-2.5`}>
+        <button disabled={ !quantity || parseFloat(quantity)<=0} onClick={handleCreateOrder} className={`w-full  font-semibold text-sm text-white rounded-xl bg-black  disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer px-3 py-2.5`}>
              {type === "LONG" ? "OPEN LONG" : "OPEN SHORT"}
         </button>
 

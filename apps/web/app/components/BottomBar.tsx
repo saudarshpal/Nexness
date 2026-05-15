@@ -10,7 +10,7 @@ const tabs: Tab[] = ["Open Orders", "Trade History"]
 const openOrderColumns = ["Symbol", "Side", "Opening Price", "Quantity", "PnL", "Leverage", "Date", "Time", "Close"]
 const tradeHistoryColoumns = ["Symbol", "Side", "Opening Price", "Quantity", "Closing Price", "PnL", "Close Type", "Date", "Time"]
 
-export default function BottomBar() {
+const BottomBar = () => {
   const [activeTab, setActiveTab] = useState<Tab>("Open Orders");
   const { openOrders, closedOrders, closeOrderMutation } = useOrders();
   const { priceUpdate, positionUpdate, connected } = useWebsocket();
@@ -207,3 +207,5 @@ export default function BottomBar() {
     </div>
   )
 }
+
+export default BottomBar

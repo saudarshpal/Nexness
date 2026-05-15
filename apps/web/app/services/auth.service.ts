@@ -1,5 +1,5 @@
 import { axiosCall } from "../lib/axios";
-import { SignupRequest, SigninRequest, AuthResponse, User} from "../types/auth.type";
+import { AuthResponse, User } from "../types/auth.type";
 
 
 export const authService = {

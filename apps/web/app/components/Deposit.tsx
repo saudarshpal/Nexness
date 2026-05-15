@@ -9,7 +9,7 @@ interface DepositProps {
   currentBalance: number;
 }
 
-export default function Deposit({ isOpen, onClose, currentBalance }: DepositProps) {
+const Deposit = ({ isOpen, onClose, currentBalance }: DepositProps) => {
   const [amount, setAmount] = useState("");
   const { depositBalance } = useBalance()
 
@@ -108,3 +108,5 @@ export default function Deposit({ isOpen, onClose, currentBalance }: DepositProp
     </div>
   );
 }
+
+export default Deposit

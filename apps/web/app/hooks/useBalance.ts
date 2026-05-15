@@ -7,7 +7,7 @@ export const useBalance = () =>{
 
     const queryClient = useQueryClient();
     
-    const { data }  =  useQuery({
+    const { data : walletBalance }  =  useQuery({
         queryKey : ['balance'],
         queryFn : () => balanceService.getBalance(),
         staleTime : 10000,
@@ -30,7 +30,7 @@ export const useBalance = () =>{
     });
 
     return {
-        data,
+        walletBalance,
         depositBalance
     }
 }

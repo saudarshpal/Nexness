@@ -12,7 +12,7 @@ import { useBalance } from "../hooks/useBalance";
 import Deposit from "../components/Deposit";
 
 const Terminal = () => {
-    const { data } = useBalance();
+    const { walletBalance } = useBalance();
     const [isDepositOpen, setIsDepositOpen] = useState(false);
     const router = useRouter();
     const [symbol, setSymbol] = useState('BTCUSDT');
@@ -24,7 +24,7 @@ const Terminal = () => {
         if( !isLoading && !isAuthenticated ){
             router.push('/signin')
         }
-    },[isAuthenticated])
+    },[isAuthenticated,isLoading])
 
     return (
         <div className="flex flex-col">
@@ -38,10 +38,10 @@ const Terminal = () => {
                     </span>
                 </div>
                 <div className="flex justify-between items-center ">
-                    <span className="w-50">Balance: $ {`${!isLoading ? data?.balance : "$ ---"}`}</span>
+                    <span className="w-50">Balance: $ {`${!isLoading ? walletBalance?.balance : "$ ---"}`}</span>
                     <button 
                         onClick={() => setIsDepositOpen(true)}
-                        className="bg-black text-white font-semibold rounded-full px-5 py-[6px] "
+                        className="bg-black text-white font-semibold rounded-full border-2 border-gray-300 px-5 py-[6px] "
                     >
                         Deposit
                     </button>
@@ -49,7 +49,7 @@ const Terminal = () => {
                 <Deposit
                     isOpen={isDepositOpen}
                     onClose={() => setIsDepositOpen(false)}
-                    currentBalance={data?.balance ?? 0}
+                    currentBalance={walletBalance?.balance ?? 0}
                 />
             </div>
             <Group orientation="horizontal">

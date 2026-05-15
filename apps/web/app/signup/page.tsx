@@ -62,7 +62,7 @@ const Signup = () => {
                                 type='text'
                                 value={name}
                                 onChange={(e)=> setName(e.target.value)}
-                                className='w-full px-4 py-2 border-2 border-black rounded-lg outline-none'
+                                className='w-full px-4 py-2 border-2 border-black rounded-full outline-none'
                                 placeholder='Enter your name'
                             />
                         </div>
@@ -73,7 +73,7 @@ const Signup = () => {
                                 type='text'
                                 value={email}
                                 onChange={(e)=> setEmail(e.target.value)}
-                                className='w-full px-4 py-2 border-2 border-black rounded-lg outline-none'
+                                className='w-full px-4 py-2 border-2 border-black rounded-full outline-none'
                                 placeholder='Enter your name'
                             />
                         </div>
@@ -84,13 +84,13 @@ const Signup = () => {
                                 type='text'
                                 value={password}
                                 onChange={(e)=> setPassword(e.target.value)}
-                                className='w-full px-4 py-2 border-2 border-black rounded-lg outline-none'
+                                className='w-full px-4 py-2 border-2 border-black rounded-full outline-none'
                                 placeholder='Enter your name'
                             />
                         </div>
 
                         <button type='submit'
-                            className='w-full bg-black text-white font-semibold rounded-lg px-4 py-3 mt-4'
+                            className='w-full bg-black text-white font-semibold rounded-full hover:bg-black/90 cursor-pointer px-4 py-3 mt-4'
                             >
                             Create Account
                         </button>

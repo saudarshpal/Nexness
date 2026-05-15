@@ -1,5 +1,5 @@
 import { axiosCall } from "../lib/axios";
-import {  BalanceResponse, DepositRequest } from "../types/balance.type";
+import { BalanceResponse, DepositRequest } from "../types/balance.type";
 
 export const  balanceService = {
     getBalance : async() : Promise<BalanceResponse> => {
