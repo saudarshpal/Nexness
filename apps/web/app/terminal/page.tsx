@@ -11,11 +11,11 @@ import { useWebsocket } from "../hooks/useWebsocket";
 import { useBalance } from "../hooks/useBalance";
 import Deposit from "../components/Deposit";
 
-
 const Terminal = () => {
     const { data } = useBalance();
     const [isDepositOpen, setIsDepositOpen] = useState(false);
     const router = useRouter();
+    const [symbol, setSymbol] = useState('BTCUSDT');
     
     const { isAuthenticated, isLoading } = useAuth();
     useWebsocket();
@@ -28,7 +28,7 @@ const Terminal = () => {
 
     return (
         <div className="flex flex-col">
-            <div className="flex justify-between items-center border-b border-gray-300 py-5  px-5 ">
+            <div className="flex justify-between items-center border-b border-gray-300 py-5  px-3 ">
                 <span className="font-semibold text-2xl">
                     Nexness Terminal
                 </span>
@@ -54,7 +54,7 @@ const Terminal = () => {
             </div>
             <Group orientation="horizontal">
                 <Panel defaultSize="25%">
-                    <LiveTicker></LiveTicker>
+                    <LiveTicker setSymbol={setSymbol}></LiveTicker>
                 </Panel>
                 <Separator className="outline-none">
                     <div className="w-[3px] h-full bg-gray-200 " />
@@ -62,7 +62,7 @@ const Terminal = () => {
                 <Panel defaultSize={`75%`} minSize={`75%`}>
                     <Group orientation="vertical">
                         <Panel>
-                            <Chart></Chart>
+                            <Chart symbol={symbol} ></Chart>
                         </Panel>
                         <Separator className="outline-none">
                             <div className="block h-[3px] bg-gray-200 " />
@@ -76,7 +76,7 @@ const Terminal = () => {
                     <div className="w-[3px] h-full bg-gray-200 " />
                 </Separator>
                 <div>
-                    <OrderCard ></OrderCard>
+                    <OrderCard symbol={symbol}></OrderCard>
                 </div>
                 
             </Group>

@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react"
 import { useOrders } from "../hooks/useOrders"
 import { useWebsocket } from "../hooks/useWebsocket"
+import { SYMBOL } from "./LiveTicker"
 
 type Tab = "Open Orders" | "Trade History"
 
@@ -88,7 +89,7 @@ export default function BottomBar() {
               {enrichedOpenOrders?.map((position: any) => (
                 <tr key={position.id} className="whitespace-nowrap border-b border-gray-50 hover:bg-gray-50">
                   <td className="px-6 py-4 text-center text-sm ">
-                    {position.symbol.toUpperCase()}
+                    {SYMBOL[position.symbol.toUpperCase()]}
                   </td>
                   <td className="px-6 py-4 text-center text-sm">
                     <span className={position.type === "LONG" ? "text-green-700" : "text-red-600"}>
@@ -160,7 +161,7 @@ export default function BottomBar() {
               {closedOrders?.closedPositions?.map((position: any) => (
                 <tr key={position.id} className=" whitespace-nowrap border-b border-gray-50 hover:bg-gray-50">
                   <td className="px-6 py-4 text-center text-sm">
-                    {position.symbol.toUpperCase()}
+                    {SYMBOL[position.symbol.toUpperCase()]}
                   </td>
                   <td className="px-6 py-4 text-center text-sm">
                     <span className={position.type === "LONG" ? "text-green-700" : "text-red-600"}>

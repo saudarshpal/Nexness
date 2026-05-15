@@ -3,11 +3,15 @@ import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries, UTCTimestamp } from "lightweight-charts";
 import { Loader2 } from "lucide-react";
 
-const SYMBOLS = [
-  { value: "BTCUSDT", label: "BTC/USDT"},
-]
 
-// timeframe config — label shown on UI, interval sent to Binance
+const SYMBOL_ICONS: Record<string, { base: string; label: string }> = {
+  BTCUSDT: { base: "https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons/svg/color/btc.svg", label: "BTC" },
+  SOLUSDT: { base: "https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons/svg/color/sol.svg", label: "SOL" },
+  ETHUSDT: { base: "https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons/svg/color/eth.svg", label: "ETH" },
+}
+
+const USDT = "https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons/svg/color/usdt.svg"
+
 const TIMEFRAMES = [
   { label: "5m",  interval: "5m" },
   { label: "30m", interval: "30m" },
@@ -16,10 +20,9 @@ const TIMEFRAMES = [
   { label: "1D",  interval: "1d" },
 ]
 
-const Chart = () => {
+const Chart = ( {symbol} : { symbol : string}) => {
   const chartRef = useRef<HTMLDivElement>(null);
 
-  const [symbol, setSymbol]       = useState("BTCUSDT");
   const [interval, setInterval]   = useState("5m");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -93,20 +96,12 @@ const Chart = () => {
       { !isLoading ? (
       <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100 ">
 
-        <div className="flex items-center gap-1">
-          {SYMBOLS.map((s) => (
-            <button
-              key={s.value}
-              onClick={() => setSymbol(s.value)}
-              className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
-                symbol === s.value
-                  ? "bg-black text-white font-semibold"
-                  : "text-gray-400 hover:text-black"
-              }`}
-            >
-              {s.label}
-            </button>
-          ))}
+        <div className="flex  items-center gap-1.5  font-semibold  px-2 py-2 border border-gray-200 rounded-full">
+          <span>{SYMBOL_ICONS[symbol]?.label}</span>
+          <img src={SYMBOL_ICONS[symbol]?.base} width={18} height={18} className="rounded-full" />
+          <span >/</span>
+          <span >USDT</span>
+          <img src={USDT} width={18} height={18} className="rounded-full" />
         </div>
 
         <div className="flex items-center gap-1">

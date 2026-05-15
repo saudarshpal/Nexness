@@ -6,20 +6,26 @@ import toast from "react-hot-toast";
 
 type PositionType= "LONG" | "SHORT" 
 
-export default function OrderCard() {
+const SYMBOL_LABELS : Record<string, string>  = {
+  BTCUSDT: "BTC",
+  ETHUSDT: "ETH",
+  SOLUSDT: "SOL",
+}
+
+
+const OrderCard = ({ symbol } : { symbol: string}) => {
     const { priceUpdate } = useWebsocket()
-    const [symbol,setSymbol] = useState('btcusdt')
-    const [type , setType] = useState<PositionType>("LONG");
+    const [ type , setType] = useState<PositionType>("LONG");
     const [quantity, SetQuantity] = useState("");
     const [takeProfit, setTakeProfit] = useState("");
     const [stopLoss, setStopLoss] = useState("");
     const [leverage, setLeverage] = useState(1);
-    const { createOrderMutation } = useOrders()
+    const { createOrderMutation } = useOrders();
     
     
     const numericQuantity = parseFloat(quantity) || 0 ;
-    const askPrice = priceUpdate[symbol]?.ask ?? 0
-    const bidPrice = priceUpdate[symbol]?.bid ?? 0
+    const askPrice = priceUpdate[symbol.toLowerCase()]?.ask ?? 0
+    const bidPrice = priceUpdate[symbol.toLowerCase()]?.bid ?? 0
 
     const activePrice = type === "LONG" ? askPrice : bidPrice;
 
@@ -38,7 +44,7 @@ export default function OrderCard() {
         
         try{
             const payload = {
-                symbol, 
+                symbol : symbol.toLowerCase(), 
                 type,
                 quantity : parseFloat(quantity) || 0 ,
                 leverage,
@@ -70,7 +76,7 @@ export default function OrderCard() {
                 {type === "LONG" ? "Ask Price" : "Bid Price"}
             </span>
             <span className={`${ type === "LONG" ?  "text-red-600" : "text-green-700"} text-md font-bold`}
-            > $ {type === "LONG" ?  priceUpdate[symbol]?.ask || "---" : priceUpdate[symbol]?.bid || "---" } 
+            > $ {type === "LONG" ?  askPrice  : bidPrice } 
             </span> 
         </div>
 
@@ -83,7 +89,7 @@ export default function OrderCard() {
                     placeholder="0.00"
                     className="bg-transparent text-sm w-full outline-none placeholder:text-gray-400"
                 />
-                <span className="text-sm ml-2">BTC</span>
+                <span className="text-sm ml-2">{SYMBOL_LABELS[symbol]}</span>
             </div>
         </div>
 
@@ -100,6 +106,10 @@ export default function OrderCard() {
                 onChange={(e) => setLeverage(parseFloat(e.target.value))}
                 className="w-full accent-black"
             />
+            <div className="flex justify-between text-xs pl-1">
+                <span>1</span>
+                <span>100</span>
+            </div>
         </div>
 
         <div className="flex flex-col gap-1">
@@ -146,3 +156,5 @@ export default function OrderCard() {
     </div>
   )
 }
+
+export default OrderCard
