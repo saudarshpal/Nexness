@@ -167,7 +167,7 @@ class PricePoller {
 
 }
 
-const pricePoller = new PricePoller(['btcusdt']);
+const pricePoller = new PricePoller(['btcusdt','ethusdt','solusdt']);
 pricePoller.start();
 
 process.on('SIGINT', () => {
