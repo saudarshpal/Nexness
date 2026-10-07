@@ -74,7 +74,7 @@ const Signup = () => {
                                 value={email}
                                 onChange={(e)=> setEmail(e.target.value)}
                                 className='w-full px-4 py-2 border-2 border-black rounded-full outline-none'
-                                placeholder='Enter your name'
+                                placeholder='Enter your email'
                             />
                         </div>
 
@@ -85,7 +85,7 @@ const Signup = () => {
                                 value={password}
                                 onChange={(e)=> setPassword(e.target.value)}
                                 className='w-full px-4 py-2 border-2 border-black rounded-full outline-none'
-                                placeholder='Enter your name'
+                                placeholder='Enter password'
                             />
                         </div>
 

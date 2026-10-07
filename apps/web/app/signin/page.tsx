@@ -68,7 +68,7 @@ const Signin = () => {
                                 type='text'
                                 onChange={(e)=> setPassword(e.target.value)}
                                 className='w-full px-4 py-2 border-2 border-black rounded-full outline-none'
-                                placeholder='Enter your name'
+                                placeholder='Enter password'
                             />
                         </div>
 
